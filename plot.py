@@ -30,19 +30,18 @@ def plot_repo(proc_file: str, plot_file: str) -> None:
     line_width = 0.5
 
     fields = [
-        ('views', 'daily', '#036'),
-        ('viewers', 'daily', '#08f'),
-        ('clones', 'daily', '#050'),
-        ('cloners', 'daily', '#0c0'),
-        ('stars', 'point', '#fd0'),
-        ('forks', 'point', '#f60'),
-        ('watchers', 'point', '#f00'),
+        ('views', 'daily', '#48f', ':'),
+        ('viewers', 'daily', '#48f', '-'),
+        ('clones', 'daily', '#0b0', ':'),
+        ('cloners', 'daily', '#0b0', '-'),
+        ('stars', 'point', '#fc0', '-'),
+        ('forks', 'point', '#f80', '-'),
+        ('watchers', 'point', '#f00', '-'),
     ]
 
     obj = json.load(open(proc_file))
     repo = obj['repo']
 
-    plt.style.use('dark_background')
     plt.rcParams.update({'font.size': 6})
     plt.yscale('log')
     plt.title(f'{repo} traffic')
@@ -51,12 +50,12 @@ def plot_repo(proc_file: str, plot_file: str) -> None:
     for which in ['daily', 'point']:
         which2dates[which] = list(map(date.fromtimestamp, obj[which]['times']))
 
-    for key, which, color in fields:
+    for key, which, color, line_style in fields:
         dates = which2dates[which]
         values = obj[which][key]
-        plt.plot(dates, values, label=key, color=color, lw=line_width)
+        plt.plot(dates, values, label=key, color=color, lw=line_width, ls=line_style)
 
-    plt.grid(color='#222', ls=':', lw=0.5)
+    plt.grid(color='#ccc', ls=':', lw=0.5)
     plt.legend()
     plt.savefig(plot_file, dpi=400)
     plt.clf()
